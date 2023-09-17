@@ -1,14 +1,12 @@
-# Read Me First
-The following was discovered as part of building this project:
+### Проект развернут в песочнице openshift
 
-* The original package name 'com.github.com.valentina810.check-brackets' is invalid and this project uses 'com.github.com.valentina810.checkbrackets' instead.
+При первом обращении может быть большой таймаут  
+https://check-brackets-git-valentinakolesnikova-dev.apps.sandbox-m4.g2pi.p1.openshiftapps.com/swagger-ui/index.html
 
-# Getting Started
+### Инструкция по локальному развертыванию
 
-### Reference Documentation
-For further reference, please consider the following sections:
-
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/3.1.3/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/3.1.3/maven-plugin/reference/html/#build-image)
-
+- установить Docker Compose
+- склонировать проект https://github.com/Valentina810/check-brackets.git
+- открыть консоль, перейти в каталог проекта и выполнить команду docker-compose up
+- сваггер приложения будет доступен по адресу http://localhost:8080/swagger-ui/index.html
+- для остановки приложения нажать Ctrl+C, ввести docker-compose down

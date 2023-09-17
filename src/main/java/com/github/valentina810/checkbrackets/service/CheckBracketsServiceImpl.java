@@ -2,17 +2,21 @@ package com.github.valentina810.checkbrackets.service;
 
 import com.github.valentina810.checkbrackets.dto.ResponseCheckBracketsDto;
 import com.github.valentina810.checkbrackets.dto.TextDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Stack;
 
 @Service
+@Slf4j
 public class CheckBracketsServiceImpl implements CheckBracketsService {
 
     @Override
     public ResponseCheckBracketsDto check(TextDto textDto) {
+        boolean isCorrect = validateTextBetweenBrackets(textDto.getText());
+        log.info("Для текста объекта {} получен ответ {}", textDto, isCorrect);
         return ResponseCheckBracketsDto.builder()
-                .isCorrect(validateTextBetweenBrackets(textDto.getText())).build();
+                .isCorrect(isCorrect).build();
     }
 
     public boolean validateTextBetweenBrackets(String input) {
