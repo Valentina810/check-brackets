@@ -1,6 +1,6 @@
 package com.github.valentina810.checkbrackets.controller;
 
-import com.github.valentina810.checkbrackets.dto.ResponseCheckBracketsDto;
+import com.github.valentina810.checkbrackets.dto.CheckBracketsDto;
 import com.github.valentina810.checkbrackets.dto.TextDto;
 import com.github.valentina810.checkbrackets.service.CheckBracketsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +25,7 @@ public class CheckBracketsController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Метод проверяет, правильно ли в тексте расставлены скобки, возвращает true - когда скобки расставлены правильно, false - в противном случае")
-    public ResponseCheckBracketsDto addRequest(@Valid @RequestBody TextDto textDto) {
-        return checkBracketsService.check(textDto);
+    public CheckBracketsDto addRequest(@Valid @RequestBody TextDto textDto) {
+        return checkBracketsService.checkBrackets(textDto);
     }
 }

@@ -1,7 +1,7 @@
 package com.github.valentina810.checkbrackets.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.valentina810.checkbrackets.dto.ResponseCheckBracketsDto;
+import com.github.valentina810.checkbrackets.dto.CheckBracketsDto;
 import com.github.valentina810.checkbrackets.dto.TextDto;
 import com.github.valentina810.checkbrackets.exception.ObjectMapperException;
 import com.github.valentina810.checkbrackets.exception.Violation;
@@ -41,7 +41,8 @@ class CheckBracketsControllerTest {
             .fieldName("text")
             .message("Значение поля не может быть пустым или состоять из пробелов")
             .build();
-    private final ResponseCheckBracketsDto responseCheckBracketsDto = ResponseCheckBracketsDto
+
+    private final CheckBracketsDto checkBracketsDto = CheckBracketsDto
             .builder()
             .isCorrect(true)
             .build();
@@ -63,8 +64,8 @@ class CheckBracketsControllerTest {
 
     @Test
     void checkText_whenValidText_thenReturnResponseCheckBracketsDto() {
-        when(checkBracketsService.check(any()))
-                .thenReturn(responseCheckBracketsDto);
+        when(checkBracketsService.checkBrackets(any()))
+                .thenReturn(checkBracketsDto);
 
         try {
             mvc.perform(post("/api/checkBrackets")
@@ -73,12 +74,12 @@ class CheckBracketsControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.isCorrect", is(responseCheckBracketsDto.getIsCorrect()), Boolean.class));
+                    .andExpect(jsonPath("$.isCorrect", is(checkBracketsDto.getIsCorrect()), Boolean.class));
         } catch (Exception e) {
             throw new ObjectMapperException(correctTextDto);
         }
 
-        verify(checkBracketsService, times(1)).check(correctTextDto);
+        verify(checkBracketsService, times(1)).checkBrackets(correctTextDto);
     }
 
     @Test
@@ -96,7 +97,7 @@ class CheckBracketsControllerTest {
             throw new ObjectMapperException(emptyTextDto);
         }
 
-        verify(checkBracketsService, never()).check(emptyTextDto);
+        verify(checkBracketsService, never()).checkBrackets(emptyTextDto);
     }
 
     @Test
@@ -115,6 +116,6 @@ class CheckBracketsControllerTest {
             throw new ObjectMapperException(spaceTextDto);
         }
 
-        verify(checkBracketsService, never()).check(spaceTextDto);
+        verify(checkBracketsService, never()).checkBrackets(spaceTextDto);
     }
 }

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseCheckBracketsDto {
+public class CheckBracketsDto {
 
     @Schema(description = "Результат проверки", example = "true")
     private Boolean isCorrect;
