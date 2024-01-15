@@ -5,7 +5,8 @@ import com.github.valentina810.checkbrackets.dto.TextDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 @Service
 @Slf4j
@@ -19,29 +20,38 @@ public class CheckBracketsServiceImpl implements CheckBracketsService {
     }
 
     public boolean checkBracketsInText(String text) {
-        Stack<Character> stack = new Stack<>();
+        Deque<Character> stack = new ArrayDeque<>();
         boolean hasText = false;
+
         for (char c : text.toCharArray()) {
-            if (c == '(' || c == '{' || c == '[') {
+            if (isOpeningBracket(c)) {
                 stack.push(c);
                 hasText = false;
-            } else if (c == ')' || c == '}' || c == ']') {
-                if (stack.isEmpty() || !hasText) {
+            } else if (isClosingBracket(c)) {
+                if (stack.isEmpty() || !hasText || !isValidPair(stack.pop(), c)) {
                     return false;
-                } else {
-                    char top = stack.pop();
-                    if ((c == ')' && top != '(') ||
-                            (c == '}' && top != '{') ||
-                            (c == ']' && top != '[')) {
-                        return false;
-                    }
                 }
             } else {
-                if ((c != ' ') || hasText) {
+                if (!Character.isWhitespace(c) || hasText) {
                     hasText = true;
                 }
             }
         }
+
         return stack.isEmpty();
+    }
+
+    private boolean isOpeningBracket(char c) {
+        return c == '(' || c == '{' || c == '[';
+    }
+
+    private boolean isClosingBracket(char c) {
+        return c == ')' || c == '}' || c == ']';
+    }
+
+    private boolean isValidPair(char openBracket, char closeBracket) {
+        return (closeBracket == ')' && openBracket == '(') ||
+                (closeBracket == '}' && openBracket == '{') ||
+                (closeBracket == ']' && openBracket == '[');
     }
 }

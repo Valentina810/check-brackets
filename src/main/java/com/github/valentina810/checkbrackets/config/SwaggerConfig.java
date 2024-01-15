@@ -14,7 +14,7 @@ public class SwaggerConfig {
                 .info(
                         new Info()
                                 .title("Check-brackets Api")
-                                .version("1.0.0")
+                                .version("1.0.1")
                                 .contact(
                                         new Contact()
                                                 .email("valentinavasileva34@gmail.com")

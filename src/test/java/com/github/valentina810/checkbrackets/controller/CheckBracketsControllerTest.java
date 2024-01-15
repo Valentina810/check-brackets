@@ -1,12 +1,15 @@
 package com.github.valentina810.checkbrackets.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.valentina810.checkbrackets.controller.parameters.ParameterForCheckBracketsControllerTest;
 import com.github.valentina810.checkbrackets.dto.CheckBracketsDto;
 import com.github.valentina810.checkbrackets.dto.TextDto;
 import com.github.valentina810.checkbrackets.exception.ObjectMapperException;
 import com.github.valentina810.checkbrackets.exception.Violation;
 import com.github.valentina810.checkbrackets.service.CheckBracketsService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,16 +55,6 @@ class CheckBracketsControllerTest {
             .text("text()")
             .build();
 
-    private final TextDto emptyTextDto = TextDto
-            .builder()
-            .text("")
-            .build();
-
-    private final TextDto spaceTextDto = TextDto
-            .builder()
-            .text("    ")
-            .build();
-
     @Test
     void checkText_whenValidText_thenReturnResponseCheckBracketsDto() {
         when(checkBracketsService.checkBrackets(any()))
@@ -82,11 +75,13 @@ class CheckBracketsControllerTest {
         verify(checkBracketsService, times(1)).checkBrackets(correctTextDto);
     }
 
-    @Test
-    void checkText_whenEmptyText_thenReturnResponseBadRequest() {
+    @ParameterizedTest
+    @MethodSource("com.github.valentina810.checkbrackets.controller.parameters.CheckBracketsControllerTestProvider#provider")
+    void checkText_whenEmptyText_thenReturnResponseBadRequest(ParameterForCheckBracketsControllerTest parameter) {
+        String text = parameter.getText();
         try {
             mvc.perform(post("/api/checkBrackets")
-                            .content(mapper.writeValueAsString(emptyTextDto))
+                            .content(mapper.writeValueAsString(text))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -94,28 +89,12 @@ class CheckBracketsControllerTest {
                     .andExpect(jsonPath("$.violations.[0].fieldName", is(VIOLATION_TEXT.getFieldName()), String.class))
                     .andExpect(jsonPath("$.violations.[0].message", is(VIOLATION_TEXT.getMessage()), String.class));
         } catch (Exception e) {
-            throw new ObjectMapperException(emptyTextDto);
+            throw new ObjectMapperException(text);
         }
 
-        verify(checkBracketsService, never()).checkBrackets(emptyTextDto);
-    }
-
-    @Test
-    void checkText_whenSpaceText_thenReturnResponseBadRequest() {
-        try {
-
-            mvc.perform(post("/api/checkBrackets")
-                            .content(mapper.writeValueAsString(spaceTextDto))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.violations.[0].fieldName", is(VIOLATION_TEXT.getFieldName()), String.class))
-                    .andExpect(jsonPath("$.violations.[0].message", is(VIOLATION_TEXT.getMessage()), String.class));
-        } catch (Exception e) {
-            throw new ObjectMapperException(spaceTextDto);
-        }
-
-        verify(checkBracketsService, never()).checkBrackets(spaceTextDto);
+        verify(checkBracketsService, never()).checkBrackets(TextDto
+                .builder()
+                .text(text)
+                .build());
     }
 }
