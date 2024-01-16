@@ -1,7 +1,6 @@
 package com.github.valentina810.checkbrackets.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.valentina810.checkbrackets.controller.parameters.ParameterForCheckBracketsControllerTest;
 import com.github.valentina810.checkbrackets.dto.CheckBracketsDto;
 import com.github.valentina810.checkbrackets.dto.TextDto;
 import com.github.valentina810.checkbrackets.exception.ObjectMapperException;
@@ -77,8 +76,7 @@ class CheckBracketsControllerTest {
 
     @ParameterizedTest
     @MethodSource("com.github.valentina810.checkbrackets.controller.parameters.CheckBracketsControllerTestProvider#provider")
-    void checkText_whenEmptyText_thenReturnResponseBadRequest(ParameterForCheckBracketsControllerTest parameter) {
-        String text = parameter.getText();
+    void checkText_whenEmptyText_thenReturnResponseBadRequest(String text) {
         try {
             mvc.perform(post("/api/checkBrackets")
                             .content(mapper.writeValueAsString(text))
