@@ -1,8 +1,3 @@
-### Проект развернут в песочнице openshift
-
-При первом обращении может быть большой таймаут  
-https://check-brackets-git-valentinakolesnikova-dev.apps.sandbox-m4.g2pi.p1.openshiftapps.com/swagger-ui/index.html
-
 ### Инструкция по локальному развертыванию
 
 - установить Docker Compose
