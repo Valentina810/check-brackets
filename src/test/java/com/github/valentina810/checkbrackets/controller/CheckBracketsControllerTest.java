@@ -3,7 +3,6 @@ package com.github.valentina810.checkbrackets.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.valentina810.checkbrackets.dto.CheckBracketsDto;
 import com.github.valentina810.checkbrackets.dto.TextDto;
-import com.github.valentina810.checkbrackets.exception.ObjectMapperException;
 import com.github.valentina810.checkbrackets.exception.Violation;
 import com.github.valentina810.checkbrackets.service.CheckBracketsService;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -59,17 +59,14 @@ class CheckBracketsControllerTest {
         when(checkBracketsService.checkBrackets(any()))
                 .thenReturn(checkBracketsDto);
 
-        try {
-            mvc.perform(post("/api/checkBrackets")
-                            .content(mapper.writeValueAsString(correctTextDto))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.isCorrect", is(checkBracketsDto.getIsCorrect()), Boolean.class));
-        } catch (Exception e) {
-            throw new ObjectMapperException(correctTextDto);
-        }
+        assertDoesNotThrow(() ->
+                mvc.perform(post("/api/checkBrackets")
+                                .content(mapper.writeValueAsString(correctTextDto))
+                                .characterEncoding(StandardCharsets.UTF_8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.isCorrect", is(checkBracketsDto.getIsCorrect()), Boolean.class)));
 
         verify(checkBracketsService, times(1)).checkBrackets(correctTextDto);
     }
@@ -77,18 +74,15 @@ class CheckBracketsControllerTest {
     @ParameterizedTest
     @MethodSource("com.github.valentina810.checkbrackets.controller.parameters.CheckBracketsControllerTestProvider#provider")
     void checkText_whenEmptyText_thenReturnResponseBadRequest(String text) {
-        try {
-            mvc.perform(post("/api/checkBrackets")
-                            .content(mapper.writeValueAsString(text))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.violations.[0].fieldName", is(VIOLATION_TEXT.getFieldName()), String.class))
-                    .andExpect(jsonPath("$.violations.[0].message", is(VIOLATION_TEXT.getMessage()), String.class));
-        } catch (Exception e) {
-            throw new ObjectMapperException(text);
-        }
+        assertDoesNotThrow(() ->
+                mvc.perform(post("/api/checkBrackets")
+                                .content(mapper.writeValueAsString(text))
+                                .characterEncoding(StandardCharsets.UTF_8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.violations.[0].fieldName", is(VIOLATION_TEXT.getFieldName()), String.class))
+                        .andExpect(jsonPath("$.violations.[0].message", is(VIOLATION_TEXT.getMessage()), String.class)));
 
         verify(checkBracketsService, never()).checkBrackets(TextDto
                 .builder()
